@@ -4,7 +4,7 @@ const User = require('../models/User');
 
 require("dotenv").config();
 
-// Add the user mail and hashed password into the database
+// Add the user encrypted mail and hashed password into the database
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
@@ -14,16 +14,15 @@ exports.signup = (req, res, next) => {
         });
         user.save()
           .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-          .catch(error => res.status(400).json({ error }));
+          .catch(error => res.status(403).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
   };
 
 
-/* Check if the user email is in the database. Then, if the mail is found,
-   encrypt the password, and check if the encrypted password in the database
-   was encrypted from the same string. If yes, then generates a temporary json web token,
-   itself encrypted with a 256 characters long hexadecimal key made of four SHA256 Hashes.*/
+/* The mail is two-ways encrypted. It can still be decrypted to mail the user ;
+   The password is one-way hashed. It can only be compared to a hashed string ;
+   The JSON web token is signed by four nonsensical SHA256 hashes (256 chars) */
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
       .then(user => {

@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require("helmet");
 const path = require('path');
 const app = express();
 
@@ -24,9 +25,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Express app secure toolset
+app.use(helmet());
 
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', sauceRoutes);
+
+// Required by multer to save pictures on the server
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 module.exports = app;
