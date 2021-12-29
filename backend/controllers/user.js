@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const CryptoJS = require("crypto-js");
 
 require("dotenv").config();
 
@@ -9,7 +10,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: req.body.email,
+          email: CryptoJS.EvpKDF(req.body.email, process.env.SECRET_TOKEN).toString(CryptoJS.enc.Base64),
           password: hash
         });
         user.save()
@@ -24,7 +25,8 @@ exports.signup = (req, res, next) => {
    The password is one-way hashed. It can only be compared to a hashed string ;
    The JSON web token is signed by four nonsensical SHA256 hashes (256 chars) */
 exports.login = (req, res, next) => {
-    User.findOne({ email: req.body.email })
+    const emailCrypt  = CryptoJS.EvpKDF(req.body.email, process.env.SECRET_TOKEN).toString(CryptoJS.enc.Base64);
+    User.findOne({ email: emailCrypt })
       .then(user => {
         if (!user) {
           return res.status(401).json({ error: 'Utilisateur non trouvé !' });
