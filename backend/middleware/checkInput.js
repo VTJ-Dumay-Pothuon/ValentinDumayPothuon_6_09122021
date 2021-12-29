@@ -1,6 +1,6 @@
 module.exports = (req, res, next) => {
     const isValidInput = (sauce) => {
-        const regexp = new RegExp ( "^[^\\[\\]\\|\\;\\']+$" );
+        const regexp = new RegExp ( "^[^\\[\\]\\|\\;]+$" );
         if ( regexp.test(String(sauce.name)) &&
              regexp.test(String(sauce.manufacturer)) && 
              regexp.test(String(sauce.description)) &&
