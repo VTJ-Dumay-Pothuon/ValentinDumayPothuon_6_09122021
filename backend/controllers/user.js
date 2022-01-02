@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: CryptoJS.EvpKDF(req.body.email, process.env.SECRET_TOKEN).toString(CryptoJS.enc.Base64),
+          email: CryptoJS.EvpKDF(req.body.email, process.env.CRYPTOMAIL).toString(CryptoJS.enc.Base64),
           password: hash
         });
         user.save()
@@ -25,7 +25,7 @@ exports.signup = (req, res, next) => {
    The password is one-way hashed. It can only be compared to a hashed string ;
    The JSON web token is signed by four nonsensical SHA256 hashes (256 chars) */
 exports.login = (req, res, next) => {
-    const emailCrypt  = CryptoJS.EvpKDF(req.body.email, process.env.SECRET_TOKEN).toString(CryptoJS.enc.Base64);
+    const emailCrypt  = CryptoJS.EvpKDF(req.body.email, process.env.CRYPT).toString(CryptoJS.enc.Base64);
     User.findOne({ email: emailCrypt })
       .then(user => {
         if (!user) {
