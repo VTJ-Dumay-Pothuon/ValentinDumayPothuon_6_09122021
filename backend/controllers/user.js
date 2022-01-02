@@ -25,7 +25,7 @@ exports.signup = (req, res, next) => {
    The password is one-way hashed. It can only be compared to a hashed string ;
    The JSON web token is signed by four nonsensical SHA256 hashes (256 chars) */
 exports.login = (req, res, next) => {
-    const emailCrypt  = CryptoJS.EvpKDF(req.body.email, process.env.CRYPT).toString(CryptoJS.enc.Base64);
+    const emailCrypt  = CryptoJS.EvpKDF(req.body.email, process.env.CRYPTOMAIL).toString(CryptoJS.enc.Base64);
     User.findOne({ email: emailCrypt })
       .then(user => {
         if (!user) {
