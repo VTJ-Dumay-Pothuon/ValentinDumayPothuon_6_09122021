@@ -20,7 +20,7 @@ require("dotenv").config();
       next();
     }
   } catch {
-    res.status(401).json({
+    res.status(403).json({
       error: new Error('Utilisateur non autorisé !')
     });
   }
