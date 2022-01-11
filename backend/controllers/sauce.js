@@ -31,21 +31,19 @@ exports.getSauce = (req, res, next) => {
 
 // UPDATE
 exports.editSauce = (req, res, next) => {
-  
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
       const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {
-        const sauceObject = req.file ? {
-          ...JSON.parse(req.body.sauce),
-          imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body };
-      Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+      if (req.file) fs.unlink(`images/${filename}`,
+      (error) => { if (error) res.status(400).json({ error })});
+      const sauceObject = req.file ? {
+        ...JSON.parse(req.body.sauce),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      } : { ...req.body };
+      Sauce.updateOne({ _id: sauce.id }, { ...sauceObject, _id: sauce.id })
         .then(() => res.status(200).json({ message: 'Sauce updated!'}))
         .catch(error => res.status(400).json({ error }));
       });
-    })
-    .catch(error => res.status(500).json({ error }));
 };
 
 
